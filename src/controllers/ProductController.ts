@@ -2,6 +2,7 @@ import { Response, Request } from 'express'
 import { Product } from '../models/Products'
 import { ProductType } from '../types'
 import { User } from '../models/Users'
+import { calculateTime } from '../helpers/CalculateTime'
 
 export const getProducts = async (_req: Request, res: Response) => {
     const products = await Product.find()
@@ -16,20 +17,20 @@ export const getProduct = async (req: Request, res: Response) => {
 export const getDiscount = async (req: Request, res: Response) => {
     try {
         const user: any = await User.findById(req.params.userId)
-        const product: any = await Product.find({ name: req.params.productName })
+        const product: any = await Product.findOne({ name: req.params.productName })
+        
+        const userCreated = await calculateTime(user.createdAt)
 
-        const userCreated = new Date(user.createdAt)
-        const dateNow = new Date()
-        const MonthNow = dateNow.getMonth() + 1
-        const createdMonth = userCreated.getMonth() + 1 
-
-        if (createdMonth <= MonthNow &&  dateNow.getDate() < userCreated.getDate()) {
+        if (userCreated == 0) {
             res.json({
                 img: product.img,
                 name: product.name,
                 description: product.description,
                 price: product.price * product.special_discount / 100
             })
+        }
+        else {
+            res.json(product)
         }
     } catch (error) {
         console.error(error)
