@@ -1,0 +1,82 @@
+import { Response, Request } from 'express'
+import { Product } from '../models/Products'
+import { ProductType } from '../types'
+import { User } from '../models/Users'
+
+export const getProducts = async (_req: Request, res: Response) => {
+    const products = await Product.find()
+    res.json(products)
+}
+
+export const getProduct = async (req: Request, res: Response) => {
+    const product = await Product.findById(req.params.id)
+    res.json(product)
+}
+
+export const getDiscount = async (req: Request, res: Response) => {
+    try {
+        const user: any = await User.findById(req.params.userId)
+        const product: any = await Product.find({ name: req.params.productName })
+
+        const userCreated = new Date(user.createdAt)
+        const dateNow = new Date()
+        const MonthNow = dateNow.getMonth() + 1
+        const createdMonth = userCreated.getMonth() + 1 
+
+        if (createdMonth <= MonthNow &&  dateNow.getDate() < userCreated.getDate()) {
+            res.json({
+                img: product.img,
+                name: product.name,
+                description: product.description,
+                price: product.price * product.special_discount / 100
+            })
+        }
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ messageError: "Product or User not found" })
+    }
+}
+
+export const addProduct = async (req: Request, res: Response) => {
+    try {
+        const productData: ProductType = {
+            img: req.body.img,
+            name: req.body.name,
+            description: req.body.description,
+            price: req.body.price,
+            special_discount: req.body.special_discount
+        }
+
+        await Product.create(productData)
+
+        res.json({ message: "Product created" })
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ messageError: "Error creating product" })
+    }
+}
+
+export const updateProduct = async (req: Request, res: Response) => {
+    try {
+        const productData: ProductType = {
+            img: req.body.img,
+            name: req.body.name,
+            description: req.body.description,
+            price: req.body.price,
+            special_discount: req.body.special_discount
+        }
+
+        await Product.findByIdAndUpdate(req.params.id, productData)
+
+        res.json({ message: "Product updated" })
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ messageError: "Error creating product" })
+    }
+}
+
+export const deleteProduct = async (req: any, res: Response) => {
+    await Product.deleteOne({ _id: req.params.id })
+
+    res.sendStatus(204)
+}
