@@ -9,7 +9,8 @@ export default function App() {
     const app = express();
 
     //Settings
-    app.set('port', 3000)
+    //Variables de entorno nativas sin necesidad de DOTENV pero no funciona
+    app.set('port', process.env.SERVER_HOST || 3000)
 
     //Middlewares
     app.use(express.json())

@@ -1,5 +1,5 @@
 import { Response, Request } from 'express'
-import { generateProducts } from '../db/SandBoxProducts'
+import { generateProducts } from '../db/SandboxProducts'
 import { generateUsers } from '../db/SandboxUsers'
 
 export const generateTestData = async (_req:Request, res:Response) => {

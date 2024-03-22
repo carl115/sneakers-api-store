@@ -1,5 +1,5 @@
 import App from "./app";
-import connDB from "./db";
+import connDB from "./db/db";
 
 connDB()
 App()

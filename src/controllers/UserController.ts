@@ -24,24 +24,6 @@ export const addUser = async (req: Request, res: Response) => {
   }
 }
 
-export const addTestUser = async (req: any, res: Response) => {
-  try {
-    const userData: UserType = {
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      createdAt: req.body.createdAt
-    }
-
-    await User.create(userData)
-
-    res.json({ message: "User created" })
-  } catch (error) {
-    console.error(error)
-    res.status(400).json({ messageError: "Error creating test user" })
-  }
-}
-
 export const updateUser = async (req: any, res: Response) => {
   try {
     const userData: UserType = {
